@@ -121,20 +121,42 @@ export default function LandingPage() {
             {ocrResult.error ? (
               <div className="text-red-500 text-center">{ocrResult.error}</div>
             ) : (
-              <div className="grid grid-cols-1 gap-4">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">Name:</span>
-                  <span className="text-right">{ocrResult.name || "Not found"}</span>
+              <>
+                <div className="flex justify-center items-center mb-6">
+                  {ocrResult.status === "valid" && (
+                    <span className="text-green-500 text-2xl mr-2">✅</span>
+                  )}
+                  {ocrResult.status === "invalid" && (
+                    <span className="text-red-500 text-2xl mr-2">❌</span>
+                  )}
+                  {ocrResult.status === "suspicious" && (
+                    <span className="text-yellow-400 text-2xl mr-2">⚠️</span>
+                  )}
+                  <span className={
+                    ocrResult.status === "valid" ? "text-green-500 font-bold text-lg" :
+                    ocrResult.status === "invalid" ? "text-red-500 font-bold text-lg" :
+                    "text-yellow-400 font-bold text-lg"
+                  }>
+                    {ocrResult.status === "valid" && "Valid"}
+                    {ocrResult.status === "invalid" && "Invalid"}
+                    {ocrResult.status === "suspicious" && "Suspicious"}
+                  </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">Marks:</span>
-                  <span className="text-right">{ocrResult.marks || "Not found"}</span>
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold">Name:</span>
+                    <span className="text-right">{ocrResult.name || "Not found"}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold">Marks:</span>
+                    <span className="text-right">{ocrResult.marks || "Not found"}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold">Certificate ID:</span>
+                    <span className="text-right">{ocrResult.certificateId || "Not found"}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">Certificate ID:</span>
-                  <span className="text-right">{ocrResult.certificateId || "Not found"}</span>
-                </div>
-              </div>
+              </>
             )}
           </div>
         )}

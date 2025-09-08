@@ -1,4 +1,5 @@
 import express from "express";
+import { getCertificateStatus } from "./db.js";
 import cors from "cors";
 import multer from "multer";
 import { fromPath } from "pdf2pic";
@@ -45,11 +46,19 @@ app.post("/api/ocr", upload.single("certificate"), async (req, res) => {
       rawText: text
     };
 
+    // Validate against MongoDB
+    const status = await getCertificateStatus({
+      name: result.name,
+      marks: result.marks,
+      certificateId: result.certificateId
+    });
+    result.status = status;
+
     console.log("OCR Extraction Result:", result);
 
-  fs.unlinkSync(pdfPath);
-  fs.unlinkSync(imagePath);
-  fs.rmdirSync(outputDir);
+    fs.unlinkSync(pdfPath);
+    fs.unlinkSync(imagePath);
+    fs.rmdirSync(outputDir);
 
     res.json(result);
   } catch (err) {
