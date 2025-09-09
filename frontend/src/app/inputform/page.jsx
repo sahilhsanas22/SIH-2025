@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 
-
 export default function LandingPage() {
   const [darkMode, setDarkMode] = useState(true);
   const [form, setForm] = useState({ name: "", roll: "", marks: "", certId: "" });
