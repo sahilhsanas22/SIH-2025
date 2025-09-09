@@ -1,26 +1,41 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 
+interface FormState {
+  name: string;
+  roll: string;
+  marks: string;
+  certId: string;
+}
+
+interface OcrResult {
+  name?: string;
+  marks?: string;
+  certificateId?: string;
+  error?: string;
+  status?: "valid" | "invalid" | "suspicious";
+}
+
 export default function LandingPage() {
   const [darkMode, setDarkMode] = useState(true);
-  const [form, setForm] = useState({ name: "", roll: "", marks: "", certId: "" });
-  const [fileUrl, setFileUrl] = useState(null);
-  const [fileObj, setFileObj] = useState(null);
-  const fileInputRef = React.useRef();
-  const [ocrResult, setOcrResult] = useState(null);
+  const [form, setForm] = useState<FormState>({ name: "", roll: "", marks: "", certId: "" });
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [fileObj, setFileObj] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [ocrResult, setOcrResult] = useState<OcrResult | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleModeToggle = () => setDarkMode((prev) => !prev);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file && (file.type === "application/pdf" || file.type === "image/png")) {
       setFileUrl(URL.createObjectURL(file));
       setFileObj(file);
@@ -30,7 +45,7 @@ export default function LandingPage() {
     }
   };
 
-  const handleOcrSubmit = async (e) => {
+  const handleOcrSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fileObj) return;
     setLoading(true);
