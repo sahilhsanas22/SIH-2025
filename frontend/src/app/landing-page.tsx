@@ -1,13 +1,21 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "../components/ui/button";
 
 export default function LandingPage() {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-300 to-slate-500 flex flex-col">
       <nav className="w-full bg-slate-800 text-white flex items-center justify-between px-8 py-4 shadow-md">
         <span className="text-2xl font-bold tracking-wide">Government of Jharkhand</span>
-        <Button className="px-6 py-2 text-base font-semibold rounded-lg bg-slate-700 hover:bg-slate-900 shadow" style={{marginLeft: 'auto'}}>Login</Button>
+        <Button
+          className="px-6 py-2 text-base font-semibold rounded-lg bg-slate-700 hover:bg-slate-900 shadow"
+          style={{marginLeft: 'auto'}}
+          onClick={() => router.push('/login')}
+        >
+          Login
+        </Button>
       </nav>
       <main className="flex-1 flex flex-col items-center justify-center">
         <div className="bg-white/80 rounded-2xl shadow-xl p-10 flex flex-col items-center max-w-2xl mt-10">
