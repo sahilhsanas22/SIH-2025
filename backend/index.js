@@ -1,5 +1,5 @@
 import express from "express";
-import { getCertificateStatus } from "./db.js";
+import { getCertificateStatus, validateAuthenticatorLogin, validateAdminLogin } from "./db.js";
 import cors from "cors";
 import multer from "multer";
 import { fromPath } from "pdf2pic";
@@ -61,6 +61,34 @@ app.post("/api/ocr", upload.single("certificate"), async (req, res) => {
     fs.rmdirSync(outputDir);
 
     res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/authenticator-login", async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const valid = await validateAuthenticatorLogin({ username, password });
+    if (valid) {
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ success: false, error: "Invalid credentials" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/admin-login", async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const valid = await validateAdminLogin({ username, password });
+    if (valid) {
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ success: false, error: "Invalid credentials" });
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

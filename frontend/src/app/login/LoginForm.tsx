@@ -27,17 +27,55 @@ export default function LoginForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedRole === "admin" && form.username === "admin" && form.password === "admin") {
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-        router.push("/admin-dashboard");
-      }, 1200);
+    setErrorMsg("");
+    if (selectedRole === "admin") {
+      try {
+        const res = await fetch("http://localhost:5000/api/admin-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: form.username, password: form.password })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setShowSuccess(true);
+          setTimeout(() => {
+            setShowSuccess(false);
+            router.push("/admin-dashboard");
+          }, 1200);
+        } else {
+          setErrorMsg(data.error || "Invalid credentials");
+        }
+      } catch (err) {
+        setErrorMsg("Server error. Please try again.");
+      }
       return;
     }
-    // Handle login logic here
+    if (selectedRole === "authenticator") {
+      try {
+        const res = await fetch("http://localhost:5000/api/authenticator-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: form.username, password: form.password })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setShowSuccess(true);
+          setTimeout(() => {
+            setShowSuccess(false);
+            router.push("/inputform");
+          }, 1200);
+        } else {
+          setErrorMsg(data.error || "Invalid credentials");
+        }
+      } catch (err) {
+        setErrorMsg("Server error. Please try again.");
+      }
+      return;
+    }
     alert(`Role: ${selectedRole}\nUsername: ${form.username}\nPassword: ${form.password}`);
   };
 
@@ -49,6 +87,11 @@ export default function LoginForm() {
       {showSuccess && (
         <div className="absolute top-[-2.5rem] left-1/2 -translate-x-1/2 z-10 bg-green-600 text-white px-6 py-2 rounded shadow-lg text-base font-semibold animate-fade-in-out">
           Successfully logged in!
+        </div>
+      )}
+      {errorMsg && (
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-10 bg-red-600 text-white px-6 py-2 rounded shadow-lg text-base font-semibold animate-fade-in-out">
+          {errorMsg}
         </div>
       )}
       <div className="flex justify-center mb-6 gap-2">
